@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Bottling Line{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/app.css') }}">
+    <script src="https://unpkg.com/htmx.org@2.0.2" defer></script>
+</head>
+<body>
+    <header class="site-header">
+        <h1>Bottling Line</h1>
+        {% block nav %}{% endblock %}
+    </header>
+    <main class="site-main">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="site-footer">
+        <small>Bottling Line Data Capture — {{ app_env | default('development') }}</small>
+    </footer>
+</body>
+</html>
