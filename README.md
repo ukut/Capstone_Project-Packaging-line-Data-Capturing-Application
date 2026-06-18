@@ -103,7 +103,7 @@ docs/
 | Deliverable | Location |
 |---|---|
 | Code repository | This repo |
-| Deployed version | (link added end of Sprint 1) |
+| Deployed version | https://bottling-line-demo.onrender.com |
 | Task board | (Trello link added) |
 | Design and testing doc | `docs/DESIGN.md` |
 | Demo recording | (link added after July 11) |
