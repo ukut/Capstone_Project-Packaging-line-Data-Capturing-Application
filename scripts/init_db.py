@@ -9,7 +9,7 @@ from app.database import Base, engine
 
 # Importing models registers them with Base.metadata.
 # Sprint 1: uncomment as models are added.
-# from app.models import user, shift, production, downtime, quality, material, lookup, audit  # noqa
+from app.models import lookup, shift, loss_event  # noqa
 
 
 def main() -> None:
