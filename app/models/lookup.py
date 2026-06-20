@@ -17,6 +17,7 @@ Two refinements over the base version:
 The two-independent-foreign-keys structure on LossEvent is unchanged — these
 refinements only add guidance and governance, not new required relationships.
 """
+
 from sqlalchemy import Boolean, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

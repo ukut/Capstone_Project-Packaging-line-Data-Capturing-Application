@@ -19,6 +19,7 @@ captured once and derived representations are computed deterministically,
 eliminating the inconsistency that manual multi-column entry allowed.
 See app/services/derived.py for the derivation logic.
 """
+
 from datetime import date, datetime, time
 
 from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Time

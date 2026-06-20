@@ -5,6 +5,7 @@ The derived-field tests use the ACTUAL values from the historical Excel sheet
 the legacy calculated columns exactly. This is cited in docs/DESIGN.md as
 evidence of faithful migration.
 """
+
 from datetime import date, time
 
 import pytest
@@ -16,8 +17,8 @@ from app.services.anomaly.rules import (
 )
 from app.services.derived import compute_duration_minutes, derive_fields
 
-
 # ---------- Derived fields: tested against real historical data ----------
+
 
 @pytest.mark.parametrize(
     "start,stop,exp_min,exp_hhmm,exp_hr",
@@ -53,6 +54,7 @@ def test_overnight_event_rolls_over_midnight():
 
 
 # ---------- Anomaly rules ----------
+
 
 class FakeEvent:
     def __init__(self, id, duration_minutes, machine_id):

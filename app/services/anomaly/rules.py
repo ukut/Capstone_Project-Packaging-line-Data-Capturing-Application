@@ -12,6 +12,7 @@ The Strategy pattern is unchanged: each rule is a class implementing
 evaluate(), registered in ALL_RULES, and the review service iterates them.
 Adding a rule = one new class + one registry line (Open/Closed Principle).
 """
+
 from abc import ABC, abstractmethod
 from collections import Counter
 from dataclasses import dataclass

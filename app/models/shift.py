@@ -4,6 +4,7 @@ User: authentication + role-based access (operator / supervisor / admin).
 Shift: groups loss events for a working period so the supervisor can review,
 approve, and lock a whole shift's data at once.
 """
+
 import enum
 from datetime import date, datetime
 
@@ -28,10 +29,10 @@ class ShiftName(str, enum.Enum):
 
 
 class ShiftStatus(str, enum.Enum):
-    OPEN = "open"               # operator is still entering events
+    OPEN = "open"  # operator is still entering events
     PENDING_REVIEW = "pending"  # operator closed it; awaiting supervisor
-    APPROVED = "approved"       # supervisor approved (read-only)
-    LOCKED = "locked"           # locked; edits require admin override
+    APPROVED = "approved"  # supervisor approved (read-only)
+    LOCKED = "locked"  # locked; edits require admin override
 
 
 class User(Base):

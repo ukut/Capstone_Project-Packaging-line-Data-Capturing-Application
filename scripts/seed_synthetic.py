@@ -12,6 +12,7 @@ Sprint 2: populates shifts and entries across several weeks of synthetic operati
 Sprint 3: generator parameters tuned so anomaly rules fire on a known subset of shifts —
           this gives a reliable scripted demo.
 """
+
 import random
 from datetime import date, timedelta
 
@@ -59,10 +60,10 @@ SAMPLE_REJECT_CATEGORIES = [
 ]
 
 SAMPLE_USERS = [
-    {"username": "admin",     "role": "admin",      "password": "admin"},
-    {"username": "operator1", "role": "operator",   "password": "operator1"},
-    {"username": "operator2", "role": "operator",   "password": "operator2"},
-    {"username": "super1",    "role": "supervisor", "password": "super1"},
+    {"username": "admin", "role": "admin", "password": "admin"},
+    {"username": "operator1", "role": "operator", "password": "operator1"},
+    {"username": "operator2", "role": "operator", "password": "operator2"},
+    {"username": "super1", "role": "supervisor", "password": "super1"},
 ]
 
 
@@ -77,12 +78,14 @@ def generate_shifts(days_back: int = 30) -> list[dict]:
         # 1.5% baseline reject rate, occasional spikes to trigger anomaly rule
         reject_rate = random.choice([0.01, 0.015, 0.02, 0.025, 0.05])
         rejects = int(good * reject_rate / (1 - reject_rate))
-        shifts.append({
-            "date": shift_date.isoformat(),
-            "sku": sku["code"],
-            "good_count": good,
-            "reject_count": rejects,
-        })
+        shifts.append(
+            {
+                "date": shift_date.isoformat(),
+                "sku": sku["code"],
+                "good_count": good,
+                "reject_count": rejects,
+            }
+        )
     return shifts
 
 

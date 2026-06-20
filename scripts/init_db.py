@@ -5,11 +5,12 @@ Run once before first use:
 
 Idempotent — safe to run multiple times.
 """
+
 from app.database import Base, engine
 
 # Importing models registers them with Base.metadata.
 # Sprint 1: uncomment as models are added.
-from app.models import lookup, shift, loss_event  # noqa
+from app.models import lookup, loss_event, shift  # noqa
 
 
 def main() -> None:

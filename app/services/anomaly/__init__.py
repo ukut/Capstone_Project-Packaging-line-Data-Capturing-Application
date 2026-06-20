@@ -1,4 +1,5 @@
 """Anomaly detection — Strategy pattern (downtime rules)."""
+
 from app.services.anomaly.rules import (
     ALL_RULES,
     Anomaly,

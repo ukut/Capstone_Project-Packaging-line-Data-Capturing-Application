@@ -1,4 +1,5 @@
 """Tests for the loss-classification governance refinements."""
+
 import pytest
 
 from app.services.loss_classification import (
@@ -20,6 +21,7 @@ class FakeBCS:
 
 
 # ---------- suggested mapping ----------
+
 
 def test_suggest_returns_mapped_bcs():
     bcs_by_code = {"Breakdown": FakeBCS("Breakdown"), "PlannedDownTime": FakeBCS("PlannedDownTime")}
@@ -48,6 +50,7 @@ def test_cilt_suggests_planned_downtime_but_is_overridable():
 
 
 # ---------- lock enforcement ----------
+
 
 def test_locked_bcs_blocks_non_admin():
     locked = FakeBCS("Breakdown", is_locked=True)

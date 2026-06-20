@@ -15,6 +15,7 @@ in another.
 Overnight events: if event_stop is earlier than event_start (e.g. a breakdown
 spanning midnight, 23:40 -> 00:15), the stop is treated as the next day.
 """
+
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta
 
@@ -23,14 +24,14 @@ from datetime import date, datetime, time, timedelta
 class DerivedFields:
     """All values derived from (event_date, event_start, event_stop)."""
 
-    duration_hhmm: str        # "1:00"  — legacy "Duration"
-    duration_minutes: int     # 60      — legacy "Duration (min)"
-    duration_hours: float     # 1.00    — legacy "Duration (hr)"
-    month: int                # 4       — legacy "Month"
-    week: int                 # 14      — legacy "Week" (ISO week)
-    year: int                 # 2020    — legacy "Year"
-    week_year: str            # "Wk14-2020"  — legacy "Week-Year"
-    month_year: str           # "M4-2020"    — legacy "Month-Year"
+    duration_hhmm: str  # "1:00"  — legacy "Duration"
+    duration_minutes: int  # 60      — legacy "Duration (min)"
+    duration_hours: float  # 1.00    — legacy "Duration (hr)"
+    month: int  # 4       — legacy "Month"
+    week: int  # 14      — legacy "Week" (ISO week)
+    year: int  # 2020    — legacy "Year"
+    week_year: str  # "Wk14-2020"  — legacy "Week-Year"
+    month_year: str  # "M4-2020"    — legacy "Month-Year"
 
 
 def compute_duration_minutes(event_date: date, start: time, stop: time) -> int:
