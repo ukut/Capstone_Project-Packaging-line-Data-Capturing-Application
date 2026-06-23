@@ -1,0 +1,6 @@
+{# HTMX partial: BCS <option> list with the suggested category pre-selected.
+   Swapped into #bcs-select when the operator picks a Type of Loss. #}
+<option value="">— pick —</option>
+{% for b in bcs_categories %}
+<option value="{{ b.id }}"{% if b.id == suggested_id %} selected{% endif %}>{{ b.code }}</option>
+{% endfor %}

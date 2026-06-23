@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Loss Event Entry — Shift {{ shift.id }}{% endblock %}
+
+{% block content %}
+<div class="entry-page">
+  <h2>Downtime / Loss Event Entry</h2>
+  <p class="shift-meta">
+    Shift {{ shift.shift_name.value }} &middot; {{ shift.shift_date }}
+    &middot; status: <strong>{{ shift.status.value }}</strong>
+  </p>
+
+  {% if error %}
+  <div class="alert-critical" role="alert">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" action="/operator/shift/{{ shift.id }}/entry" class="event-form">
+    <div class="form-row">
+      <label>Date
+        <input type="date" name="event_date" required>
+      </label>
+      <label>Start
+        <input type="time" name="event_start" required>
+      </label>
+      <label>Stop
+        <input type="time" name="event_stop" required>
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label>SKU
+        <select name="sku_id" required>
+          <option value="">— pick —</option>
+          {% for s in skus %}
+          <option value="{{ s.id }}">{{ s.code }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>Machine
+        <select name="machine_id" required>
+          <option value="">— pick —</option>
+          {% for m in machines %}
+          <option value="{{ m.id }}">{{ m.name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label>Type of Loss
+        <select name="loss_type_id" required
+                hx-get="/operator/loss-type/0/bcs"
+                hx-trigger="change"
+                hx-target="#bcs-select"
+                hx-include="this"
+                hx-vals='js:{}'
+                onchange="this.setAttribute('hx-get','/operator/loss-type/'+this.value+'/bcs')">
+          <option value="">— pick —</option>
+          {% for lt in loss_types %}
+          <option value="{{ lt.id }}">{{ lt.code }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>BCS Category <small>(auto-suggested, can override)</small>
+        <select name="bcs_category_id" id="bcs-select" required>
+          <option value="">— pick a Type of Loss first —</option>
+          {% for b in bcs_categories %}
+          <option value="{{ b.id }}">{{ b.code }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label class="wide">Functional Failure Description
+        <input type="text" name="functional_failure_description" maxlength="500"
+               placeholder="e.g. Lift cylinder no 65 dropped">
+      </label>
+    </div>
+    <div class="form-row">
+      <label class="wide">Failure Mode Description
+        <input type="text" name="failure_mode_description" maxlength="500"
+               placeholder="e.g. Workloosed holding bolt">
+      </label>
+    </div>
+
+    <button type="submit" class="btn-primary">Add Event</button>
+  </form>
+
+  <h3>Events this shift ({{ rows | length }})</h3>
+  {% if rows %}
+  <table class="events-table">
+    <thead>
+      <tr>
+        <th>Start</th><th>Stop</th><th>Duration</th><th>SKU</th>
+        <th>Machine</th><th>BCS</th><th>Type of Loss</th><th>Failure</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        <td>{{ row.event.event_start.strftime('%H:%M') }}</td>
+        <td>{{ row.event.event_stop.strftime('%H:%M') }}</td>
+        <td>{{ row.derived.duration_hhmm }} ({{ row.derived.duration_minutes }}m)</td>
+        <td>{{ row.event.sku.code }}</td>
+        <td>{{ row.event.machine.name }}</td>
+        <td>{{ row.event.bcs_category.code }}</td>
+        <td>{{ row.event.loss_type.code }}</td>
+        <td>{{ row.event.functional_failure_description or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No events recorded yet this shift.</p>
+  {% endif %}
+</div>
+{% endblock %}
