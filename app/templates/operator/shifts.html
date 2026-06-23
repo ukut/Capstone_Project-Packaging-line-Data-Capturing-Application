@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}My Shifts{% endblock %}
+
+{% block content %}
+<div class="shifts-page">
+  <h2>My Shifts</h2>
+  <p><a href="/operator/shift/new" class="btn-primary">+ Open a Shift</a></p>
+
+  {% if shifts %}
+  <table class="shifts-table">
+    <thead>
+      <tr><th>Date</th><th>Shift</th><th>Line</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for s in shifts %}
+      <tr>
+        <td>{{ s.shift_date }}</td>
+        <td>{{ s.shift_name.value | upper }}</td>
+        <td>{{ s.line or '—' }}</td>
+        <td>{{ s.status.value }}</td>
+        <td><a href="/operator/shift/{{ s.id }}/entry">Open</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No shifts yet. Open one to start logging events.</p>
+  {% endif %}
+</div>
+{% endblock %}
