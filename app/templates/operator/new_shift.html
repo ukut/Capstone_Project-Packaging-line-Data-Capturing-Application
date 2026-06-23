@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Open a Shift{% endblock %}
+
+{% block content %}
+<div class="new-shift-page">
+  <h2>Open a Shift</h2>
+  <p class="muted">Start a new shift to begin logging downtime events. If a shift
+    for the chosen date and name already exists, you'll resume it.</p>
+
+  <form method="post" action="/operator/shift/new" class="shift-form">
+    <div class="form-row">
+      <label>Date
+        <input type="date" name="shift_date" value="{{ today }}" required>
+      </label>
+
+      <label>Shift
+        <select name="shift_name" required>
+          {% for s in shift_names %}
+          <option value="{{ s.value }}">{{ s.value | upper }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>Line <small>(optional)</small>
+        <input type="text" name="line" maxlength="64" placeholder="e.g. Line 1">
+      </label>
+    </div>
+
+    <button type="submit" class="btn-primary">Open Shift</button>
+  </form>
+
+  <p class="muted"><a href="/operator/shifts">View my shifts</a></p>
+</div>
+{% endblock %}

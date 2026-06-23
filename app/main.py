@@ -76,6 +76,9 @@ def create_app() -> FastAPI:
     from app.routes import operator
 
     app.include_router(operator.router)
+    from app.routes import operator_shift
+
+    app.include_router(operator_shift.router)
     return app
 
 
