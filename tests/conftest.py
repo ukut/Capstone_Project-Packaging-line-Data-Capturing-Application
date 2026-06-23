@@ -6,7 +6,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 # Force a fresh in-memory SQLite for the test run, before app modules load.
-os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
+os.environ.setdefault(
+    "DATABASE_URL",
+    "sqlite:///file:test_db?mode=memory&cache=shared&uri=true",
+)
 os.environ.setdefault("APP_SECRET_KEY", "test-secret-key")
 os.environ.setdefault("APP_ENV", "testing")
 

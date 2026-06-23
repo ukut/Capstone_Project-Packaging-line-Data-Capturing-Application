@@ -73,7 +73,9 @@ def create_app() -> FastAPI:
     # app.include_router(admin.router)
     # app.include_router(operator.router)
     # app.include_router(supervisor.router)
+    from app.routes import operator
 
+    app.include_router(operator.router)
     return app
 
 
