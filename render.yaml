@@ -1,12 +1,12 @@
 services:
   - type: web
     name: bottling-line-demo
-    env: python
+    runtime: python
     plan: free
     buildCommand: |
       pip install -e .
       python -m scripts.init_db
-      python -m scripts.seed_synthetic
+      python -m scripts.seed
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: APP_ENV
