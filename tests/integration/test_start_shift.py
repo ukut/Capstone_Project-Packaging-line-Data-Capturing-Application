@@ -4,6 +4,9 @@ from fastapi.testclient import TestClient
 from app.database import Base, SessionLocal, engine
 from app.main import app
 from app.models.shift import Role, Shift, ShiftStatus, User
+from app.services.auth_service import hash_password
+
+client = TestClient(app)
 
 
 @pytest.fixture(autouse=True)
@@ -11,13 +14,24 @@ def setup_db():
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     db = SessionLocal()
-    db.add(User(username="operator1", password_hash="x", role=Role.OPERATOR))
+    db.add(
+        User(
+            username="operator1",
+            password_hash=hash_password("operator1"),
+            role=Role.OPERATOR,
+        )
+    )
     db.commit()
     db.close()
+    # Log the shared client in as the operator; the session cookie persists
+    # across the requests in each test.
+    client.post(
+        "/login",
+        data={"username": "operator1", "password": "operator1"},
+        follow_redirects=False,
+    )
     yield
-
-
-client = TestClient(app)
+    client.cookies.clear()
 
 
 def test_new_shift_form_renders():

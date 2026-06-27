@@ -4,12 +4,23 @@
 
 {% block content %}
 <div class="hero">
-    <h2>Bottling Line Data Capture</h2>
-    <p>Operator entry and supervisor review for bottling line production tracking.</p>
-    <p><em>Sprint 0 scaffold — login screen and full workflow added in Sprint 1.</em></p>
-    <ul>
-        <li><a href="/health">Health check</a></li>
-        <li><a href="/docs">API docs (OpenAPI)</a></li>
+  <h2>Bottling Line Data Capture</h2>
+  <p>Operator entry and supervisor review for bottling line production tracking.</p>
+
+  {% if current_user %}
+    <p class="muted">Signed in as <strong>{{ current_user.username }}</strong>
+      ({{ current_user.role.value }}).</p>
+    <ul class="home-links">
+      {% if current_user.role.value in ("operator", "supervisor", "admin") %}
+      <li><a href="/operator/shift/new">Open a shift</a></li>
+      <li><a href="/operator/shifts">My shifts</a></li>
+      {% endif %}
+      {% if current_user.role.value in ("supervisor", "admin") %}
+      <li><span class="muted">Supervisor review &mdash; coming next</span></li>
+      {% endif %}
     </ul>
+  {% else %}
+    <p><a href="/login" class="btn-primary">Log in</a> to record or review downtime.</p>
+  {% endif %}
 </div>
 {% endblock %}
