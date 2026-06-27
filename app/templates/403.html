@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Not allowed — Bottling Line{% endblock %}
+
+{% block content %}
+<div class="error-page">
+  <h2>Access denied</h2>
+  <p class="alert-critical">{{ detail }}</p>
+  <p class="muted"><a href="/">Back to home</a></p>
+</div>
+{% endblock %}

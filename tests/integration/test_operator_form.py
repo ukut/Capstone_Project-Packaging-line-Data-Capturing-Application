@@ -7,6 +7,9 @@ from app.database import Base, SessionLocal, engine
 from app.main import app
 from app.models.lookup import SKU, BCSCategory, LossType, Machine
 from app.models.shift import Role, Shift, ShiftName, ShiftStatus, User
+from app.services.auth_service import hash_password
+
+client = TestClient(app)
 
 
 @pytest.fixture(autouse=True)
@@ -14,7 +17,7 @@ def setup_db():
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     db = SessionLocal()
-    op = User(username="op1", password_hash="x", role=Role.OPERATOR)
+    op = User(username="op1", password_hash=hash_password("op1"), role=Role.OPERATOR)
     db.add(op)
     db.flush()
     sku = SKU(code="Brew Lager(33cl)")
@@ -36,10 +39,13 @@ def setup_db():
         shift=shift.id, sku=sku.id, machine=machine.id, lt=lt.id, bcs_b=bcs_b.id, bcs_p=bcs_p.id
     )
     db.close()
+    client.post(
+        "/login",
+        data={"username": "op1", "password": "op1"},
+        follow_redirects=False,
+    )
     yield ids
-
-
-client = TestClient(app)
+    client.cookies.clear()
 
 
 def test_entry_form_renders(setup_db):

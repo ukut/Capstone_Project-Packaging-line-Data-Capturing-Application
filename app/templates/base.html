@@ -9,8 +9,17 @@
 </head>
 <body>
     <header class="site-header">
-        <h1>Bottling Line</h1>
-        {% block nav %}{% endblock %}
+        <h1><a href="/" class="site-title">Bottling Line</a></h1>
+        {% block nav %}
+        {% if current_user %}
+        <nav class="user-nav">
+            <span class="muted">{{ current_user.username }} &middot; {{ current_user.role.value }}</span>
+            <form method="post" action="/logout" class="logout-form">
+                <button type="submit" class="btn-link">Log out</button>
+            </form>
+        </nav>
+        {% endif %}
+        {% endblock %}
     </header>
     <main class="site-main">
         {% block content %}{% endblock %}

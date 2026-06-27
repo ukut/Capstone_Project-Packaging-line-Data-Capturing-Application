@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Log in — Bottling Line{% endblock %}
+
+{% block content %}
+<div class="login-page">
+  <h2>Log in</h2>
+  <p class="muted">Sign in to record or review bottling-line downtime.</p>
+
+  {% if error %}
+  <p class="alert-critical" role="alert">{{ error }}</p>
+  {% endif %}
+
+  <form method="post" action="/login" class="login-form">
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <label>Username
+      <input type="text" name="username" autocomplete="username"
+             autofocus required>
+    </label>
+
+    <label>Password
+      <input type="password" name="password" autocomplete="current-password"
+             required>
+    </label>
+
+    <button type="submit" class="btn-primary">Log in</button>
+  </form>
+
+  <p class="muted demo-hint">
+    Demo accounts: <code>operator1</code>, <code>super1</code>, <code>admin</code>
+    (password same as username).
+  </p>
+</div>
+{% endblock %}

@@ -15,7 +15,6 @@ Run:
 
 from datetime import date
 
-import bcrypt
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -23,6 +22,7 @@ from app.database import SessionLocal
 from app.models import loss_event  # noqa: F401  (registers LossEvent for relationships)
 from app.models.lookup import SKU, BCSCategory, LossType, Machine
 from app.models.shift import Role, Shift, ShiftName, ShiftStatus, User
+from app.services.auth_service import hash_password
 from scripts.seed_data import (
     BCS_CATEGORIES,
     LOSS_TYPES,
@@ -33,7 +33,7 @@ from scripts.seed_data import (
 
 
 def _hash(password: str) -> str:
-    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    return hash_password(password)
 
 
 def _get_by(db: Session, model, **kw):

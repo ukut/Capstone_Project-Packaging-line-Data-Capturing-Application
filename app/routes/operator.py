@@ -7,9 +7,9 @@ Three endpoints:
   GET  /operator/loss-type/{id}/bcs       -> HTMX partial: the suggested BCS
                                              option for a chosen Type of Loss
 
-Auth/role guards are added when login lands (story B-01/B-04). For now the
-route accepts a created_by_id so the wiring is testable; that becomes the
-current user once sessions exist.
+All three require a logged-in operator (or admin). The created_by of each loss
+event is now the authenticated user, not the shift's operator field — they're
+usually the same, but attribution should follow whoever actually keyed the row.
 """
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
@@ -18,7 +18,8 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models.shift import Shift
+from app.dependencies import require_role
+from app.models.shift import Role, Shift, User
 from app.repositories.loss_event_repo import LookupRepository, LossEventRepository
 from app.schemas.loss_event import LossEventCreate
 from app.services.derived import derive_fields
@@ -32,8 +33,16 @@ from app.services.loss_event_service import (
 router = APIRouter(prefix="/operator", tags=["operator"])
 templates = Jinja2Templates(directory="app/templates")
 
+operator_access = require_role(Role.OPERATOR, Role.SUPERVISOR, Role.ADMIN)
 
-def _entry_context(request: Request, db: Session, shift: Shift, error: str | None = None):
+
+def _entry_context(
+    request: Request,
+    db: Session,
+    shift: Shift,
+    current_user: User,
+    error: str | None = None,
+):
     """Assemble everything the entry template needs."""
     lookups = LookupRepository(db)
     events = LossEventRepository(db).list_for_shift(shift.id)
@@ -50,16 +59,22 @@ def _entry_context(request: Request, db: Session, shift: Shift, error: str | Non
         "bcs_categories": lookups.active_bcs_categories(),
         "rows": rows,
         "error": error,
+        "current_user": current_user,
     }
 
 
 @router.get("/shift/{shift_id}/entry", response_class=HTMLResponse)
-def entry_form(shift_id: int, request: Request, db: Session = Depends(get_db)):
+def entry_form(
+    shift_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(operator_access),
+):
     shift = db.get(Shift, shift_id)
     if shift is None:
         raise HTTPException(status_code=404, detail="Shift not found")
     return templates.TemplateResponse(
-        request, "operator/entry.html", _entry_context(request, db, shift)
+        request, "operator/entry.html", _entry_context(request, db, shift, current_user)
     )
 
 
@@ -68,6 +83,7 @@ def submit_event(
     shift_id: int,
     request: Request,
     db: Session = Depends(get_db),
+    current_user: User = Depends(operator_access),
     event_date: str = Form(...),
     event_start: str = Form(...),
     event_stop: str = Form(...),
@@ -95,20 +111,26 @@ def submit_event(
             functional_failure_description=functional_failure_description,
             failure_mode_description=failure_mode_description,
         )
-        # created_by_id is the shift operator until auth lands.
-        LossEventService(db).create_event(shift, payload, created_by_id=shift.operator_id)
+        LossEventService(db).create_event(shift, payload, created_by_id=current_user.id)
     except (ShiftNotEditableError, InvalidEventTimingError) as exc:
         error = str(exc)
     except ValueError as exc:
         error = f"Invalid input: {exc}"
 
     return templates.TemplateResponse(
-        request, "operator/entry.html", _entry_context(request, db, shift, error=error)
+        request,
+        "operator/entry.html",
+        _entry_context(request, db, shift, current_user, error=error),
     )
 
 
 @router.get("/loss-type/{loss_type_id}/bcs", response_class=HTMLResponse)
-def suggest_bcs(loss_type_id: int, request: Request, db: Session = Depends(get_db)):
+def suggest_bcs(
+    loss_type_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(operator_access),
+):
     """HTMX partial: returns BCS <option> tags with the suggested one pre-selected."""
     lookups = LookupRepository(db)
     loss_type = lookups.get_loss_type(loss_type_id)
