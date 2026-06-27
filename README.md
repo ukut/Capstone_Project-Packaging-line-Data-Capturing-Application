@@ -55,8 +55,20 @@ python -m scripts.seed_synthetic
 uvicorn app.main:app --reload
 
 # Visit http://localhost:8000
-# Default admin: admin / admin (change in seed script)
+# Demo accounts (operator1 / super1 / admin) — see "Demo accounts" below
 ```
+
+## Demo accounts
+
+The seed script (`scripts/seed.py`, run automatically on each Render deploy) creates three demo users so the role-based access can be evaluated end to end:
+
+| Username | Password | Role |
+|---|---|---|
+| `operator1` | `operator1` | operator |
+| `super1` | `super1` | supervisor |
+| `admin` | `admin` | admin |
+
+These are **demo-only credentials** for the public capstone deployment — username deliberately equals password purely to make evaluation frictionless. Passwords are bcrypt-hashed at rest regardless, and the production intranet deployment uses real per-user credentials (out of scope for this repository).
 
 ## Running tests
 
