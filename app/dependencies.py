@@ -77,9 +77,7 @@ def get_optional_user(request: Request, db: Session = Depends(get_db)) -> User |
     return user
 
 
-def get_current_user(
-    request: Request, user: User | None = Depends(get_optional_user)
-) -> User:
+def get_current_user(request: Request, user: User | None = Depends(get_optional_user)) -> User:
     """Require an authenticated user. Redirects to /login if absent."""
     if user is None:
         raise AuthRequiredError(next_url=request.url.path)

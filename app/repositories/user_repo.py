@@ -19,6 +19,4 @@ class UserRepository:
         return self.db.get(User, user_id)
 
     def get_by_username(self, username: str) -> User | None:
-        return (
-            self.db.execute(select(User).where(User.username == username)).scalars().first()
-        )
+        return self.db.execute(select(User).where(User.username == username)).scalars().first()
