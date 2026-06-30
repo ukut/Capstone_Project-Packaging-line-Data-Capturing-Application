@@ -16,7 +16,7 @@
       <li><a href="/operator/shifts">My shifts</a></li>
       {% endif %}
       {% if current_user.role.value in ("supervisor", "admin") %}
-      <li><span class="muted">Supervisor review &mdash; coming next</span></li>
+      <li><a href="/supervisor">Supervisor review</a></li>
       {% endif %}
     </ul>
   {% else %}

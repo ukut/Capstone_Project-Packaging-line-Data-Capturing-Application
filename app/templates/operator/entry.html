@@ -14,6 +14,7 @@
   <div class="alert-critical" role="alert">{{ error }}</div>
   {% endif %}
 
+  {% if shift.status.value == "open" %}
   <form method="post" action="/operator/shift/{{ shift.id }}/entry" class="event-form">
     <div class="form-row">
       <label>Date
@@ -88,6 +89,9 @@
 
     <button type="submit" class="btn-primary">Add Event</button>
   </form>
+  {% else %}
+  <div class="alert-info">This shift is <strong>{{ shift.status.value }}</strong> and read-only — no further events can be added.</div>
+  {% endif %}
 
   <h3>Events this shift ({{ rows | length }})</h3>
   {% if rows %}
@@ -115,6 +119,13 @@
   </table>
   {% else %}
   <p class="muted">No events recorded yet this shift.</p>
+  {% endif %}
+
+  {% if shift.status.value == "open" %}
+  <form method="post" action="/operator/shift/{{ shift.id }}/close" class="close-shift-form"
+        onsubmit="return confirm('Submit this shift for supervisor review? You will not be able to add more events.');">
+    <button type="submit" class="btn-secondary">Close shift for review</button>
+  </form>
   {% endif %}
 </div>
 {% endblock %}

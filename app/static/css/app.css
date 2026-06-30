@@ -97,3 +97,75 @@ a { color: var(--color-accent); }
 }
 .demo-hint code { background: #f0f0f0; padding: 0 0.25rem; border-radius: 3px; }
 .home-links { line-height: 2; }
+
+/* --- supervisor review (B-02) --- */
+.review-group { margin: 1.5rem 0; }
+.review-group h3 { display: flex; align-items: center; gap: 0.5rem; }
+
+.count-pill {
+    background: var(--color-border);
+    color: var(--color-fg);
+    border-radius: 999px;
+    padding: 0 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 0.05rem 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #fff;
+}
+.badge-info { background: var(--color-accent); }
+.badge-warning { background: var(--color-warning); }
+.badge-critical { background: var(--color-critical); }
+
+.status-pill {
+    border-radius: 999px;
+    padding: 0.05rem 0.55rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid var(--color-border);
+}
+.status-open { color: var(--color-accent); }
+.status-pending { color: var(--color-warning); }
+.status-approved { color: #2e7d32; }
+.status-locked { color: var(--color-muted); }
+
+.anomaly-list { list-style: none; padding: 0; }
+.anomaly {
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.4rem;
+    border-left: 4px solid var(--color-border);
+    background: #fff;
+}
+.anomaly-warning { border-left-color: var(--color-warning); }
+.anomaly-critical { border-left-color: var(--color-critical); }
+.anomaly-info { border-left-color: var(--color-accent); }
+
+.review-actions { margin: 1.5rem 0; }
+
+.btn-secondary {
+    background: #fff;
+    color: var(--color-fg);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font: inherit;
+}
+.btn-secondary:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.close-shift-form { margin-top: 1rem; }
+
+.alert-info {
+    background: #eef4fb;
+    border: 1px solid #cfe0f3;
+    color: #1a3d5c;
+    padding: 0.6rem 0.85rem;
+    border-radius: 4px;
+    margin: 0.75rem 0;
+}

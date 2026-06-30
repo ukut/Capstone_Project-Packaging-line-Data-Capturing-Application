@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Supervisor Dashboard{% endblock %}
+
+{% set group_labels = {
+  "pending": "Pending review",
+  "approved": "Approved",
+  "locked": "Locked"
+} %}
+
+{% block content %}
+<div class="supervisor-dashboard">
+  <h2>Supervisor Review</h2>
+  <p class="muted">Review submitted shifts, check flagged anomalies, then approve and lock.</p>
+
+  {% for status, summaries in groups.items() %}
+  <section class="review-group">
+    <h3>{{ group_labels.get(status, status) }}
+      <span class="count-pill">{{ summaries | length }}</span>
+    </h3>
+
+    {% if summaries %}
+    <table class="shifts-table">
+      <thead>
+        <tr>
+          <th>Date</th><th>Shift</th><th>Line</th><th>Operator</th>
+          <th>Events</th><th>Downtime</th><th>Anomalies</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in summaries %}
+        <tr>
+          <td>{{ s.shift.shift_date }}</td>
+          <td>{{ s.shift.shift_name.value | upper }}</td>
+          <td>{{ s.shift.line or '—' }}</td>
+          <td>{{ s.operator_username }}</td>
+          <td>{{ s.event_count }}</td>
+          <td>{{ s.total_downtime_minutes }} min</td>
+          <td>
+            {% if s.anomaly_count %}
+            <span class="badge badge-warning">{{ s.anomaly_count }}</span>
+            {% else %}
+            <span class="muted">0</span>
+            {% endif %}
+          </td>
+          <td><a href="/supervisor/shift/{{ s.shift.id }}">Review</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="muted">None.</p>
+    {% endif %}
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

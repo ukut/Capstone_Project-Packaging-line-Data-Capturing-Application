@@ -89,11 +89,12 @@ def create_app() -> FastAPI:
         )
 
     # Routers
-    from app.routes import auth, operator, operator_shift
+    from app.routes import auth, operator, operator_shift, supervisor
 
     app.include_router(auth.router)
     app.include_router(operator.router)
     app.include_router(operator_shift.router)
+    app.include_router(supervisor.router)
     return app
 
 

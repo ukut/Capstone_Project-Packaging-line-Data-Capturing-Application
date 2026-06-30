@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Review — Shift {{ detail.shift.id }}{% endblock %}
+
+{% block content %}
+<div class="review-page">
+  <p class="muted"><a href="/supervisor">&larr; Back to dashboard</a></p>
+
+  <h2>Review: Shift {{ detail.shift.shift_name.value | upper }} &middot; {{ detail.shift.shift_date }}</h2>
+  <p class="shift-meta">
+    Line: {{ detail.shift.line or '—' }}
+    &middot; Operator: {{ detail.shift.operator.username if detail.shift.operator else '—' }}
+    &middot; Status: <span class="status-pill status-{{ detail.shift.status.value }}">{{ detail.shift.status.value }}</span>
+    &middot; Total downtime: <strong>{{ detail.total_downtime_minutes }} min</strong>
+  </p>
+
+  {% if error %}
+  <div class="alert-critical" role="alert">{{ error }}</div>
+  {% endif %}
+
+  <h3>Anomalies ({{ detail.anomalies | length }})</h3>
+  {% if detail.anomalies %}
+  <ul class="anomaly-list">
+    {% for a in detail.anomalies %}
+    <li class="anomaly anomaly-{{ a.severity }}">
+      <span class="badge badge-{{ a.severity }}">{{ a.severity }}</span>
+      {{ a.message }}
+      <span class="muted">({{ a.rule_name }})</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">No anomalies flagged for this shift.</p>
+  {% endif %}
+
+  <h3>Events ({{ detail.rows | length }})</h3>
+  {% if detail.rows %}
+  <table class="events-table">
+    <thead>
+      <tr>
+        <th>Start</th><th>Stop</th><th>Duration</th><th>SKU</th>
+        <th>Machine</th><th>BCS</th><th>Type of Loss</th><th>Failure</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in detail.rows %}
+      <tr>
+        <td>{{ row.event.event_start.strftime('%H:%M') }}</td>
+        <td>{{ row.event.event_stop.strftime('%H:%M') }}</td>
+        <td>{{ row.derived.duration_hhmm }} ({{ row.duration_minutes }}m)</td>
+        <td>{{ row.event.sku.code }}</td>
+        <td>{{ row.event.machine.name }}</td>
+        <td>{{ row.event.bcs_category.code }}</td>
+        <td>{{ row.event.loss_type.code }}</td>
+        <td>{{ row.event.functional_failure_description or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">This shift has no recorded events.</p>
+  {% endif %}
+
+  <div class="review-actions">
+    {% if detail.can_approve %}
+    <form method="post" action="/supervisor/shift/{{ detail.shift.id }}/approve"
+          onsubmit="return confirm('Approve this shift? It becomes the official record.');">
+      <button type="submit" class="btn-primary">Approve</button>
+    </form>
+    {% elif detail.can_lock %}
+    <form method="post" action="/supervisor/shift/{{ detail.shift.id }}/lock"
+          onsubmit="return confirm('Lock this shift? Further edits will require an admin override.');">
+      <button type="submit" class="btn-primary">Lock</button>
+    </form>
+    {% elif detail.shift.status.value == "locked" %}
+    <p class="muted">This shift is locked. Editing requires an admin override.</p>
+    {% else %}
+    <p class="muted">This shift is still open; it will appear here for approval once the operator submits it.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
