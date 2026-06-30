@@ -11,17 +11,17 @@ may open and list shifts; supervisors get an additional review screen of their o
 
 from datetime import date
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.dependencies import require_role
-from app.models.shift import Role, ShiftName, User
+from app.dependencies import ForbiddenError, require_role
+from app.models.shift import Role, Shift, ShiftName, User
 from app.repositories.shift_repo import ShiftRepository
 from app.schemas.shift import ShiftCreate
-from app.services.shift_service import ShiftService
+from app.services.shift_service import InvalidShiftTransitionError, ShiftService
 
 router = APIRouter(prefix="/operator", tags=["operator-shift"])
 templates = Jinja2Templates(directory="app/templates")
@@ -76,3 +76,29 @@ def list_shifts(
         "operator/shifts.html",
         {"request": request, "shifts": shifts, "current_user": current_user},
     )
+
+
+@router.post("/shift/{shift_id}/close")
+def close_shift(
+    shift_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(operator_access),
+):
+    """Submit a shift for supervisor review (OPEN -> PENDING_REVIEW).
+
+    Only the operator who owns the shift (or an admin) may close it. Once
+    closed, the entry form is read-only and the shift appears on the
+    supervisor dashboard.
+    """
+    shift = db.get(Shift, shift_id)
+    if shift is None:
+        raise HTTPException(status_code=404, detail="Shift not found")
+    if shift.operator_id != current_user.id and current_user.role != Role.ADMIN:
+        raise ForbiddenError("You can only close your own shifts.")
+    try:
+        ShiftService(db).submit_for_review(shift)
+    except InvalidShiftTransitionError:
+        # Already submitted/approved/locked — just send them back to the list.
+        return RedirectResponse(url="/operator/shifts", status_code=303)
+    return RedirectResponse(url="/operator/shifts", status_code=303)

@@ -63,6 +63,18 @@ class ShiftRepository:
             .all()
         )
 
+    def list_by_status(self, *statuses: ShiftStatus) -> Sequence[Shift]:
+        """Return shifts in any of the given statuses, newest first.
+
+        Used by the supervisor dashboard to show Pending / Approved / Locked
+        groups. Passing no statuses returns every shift.
+        """
+        stmt = select(Shift)
+        if statuses:
+            stmt = stmt.where(Shift.status.in_(statuses))
+        stmt = stmt.order_by(Shift.shift_date.desc(), Shift.opened_at.desc())
+        return self.db.execute(stmt).scalars().all()
+
     def add(self, shift: Shift) -> Shift:
         self.db.add(shift)
         self.db.flush()
