@@ -62,6 +62,10 @@
   {% endif %}
 
   <div class="review-actions">
+    <a href="/supervisor/shift/{{ detail.shift.id }}/export.xlsx" class="btn-secondary export-link">
+      Export to Excel (legacy format)
+    </a>
+
     {% if detail.can_approve %}
     <form method="post" action="/supervisor/shift/{{ detail.shift.id }}/approve"
           onsubmit="return confirm('Approve this shift? It becomes the official record.');">
