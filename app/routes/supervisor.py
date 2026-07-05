@@ -13,15 +13,18 @@ banner on the review page rather than a 500.
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.dependencies import require_role
 from app.models.shift import Role, User
+from app.services.export_service import ExportService
 from app.services.review_service import ReviewService
 from app.services.shift_service import InvalidShiftTransitionError
+
+XLSX_MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 router = APIRouter(prefix="/supervisor", tags=["supervisor"])
 templates = Jinja2Templates(directory="app/templates")
@@ -105,3 +108,19 @@ def lock_shift(
     except InvalidShiftTransitionError as exc:
         return _render_review(request, db, shift_id, current_user, error=str(exc))
     return RedirectResponse(url=f"/supervisor/shift/{shift_id}", status_code=303)
+
+
+@router.get("/shift/{shift_id}/export.xlsx")
+def export_shift_xlsx(
+    shift_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(supervisor_access),
+):
+    """Download the shift's loss events in the legacy 18-column Excel layout."""
+    export = ExportService(db)
+    shift = ReviewService(db).shifts.get(shift_id)
+    if shift is None:
+        raise HTTPException(status_code=404, detail="Shift not found")
+    content = export.build_xlsx_bytes(shift)
+    headers = {"Content-Disposition": f'attachment; filename="{export.filename_for(shift)}"'}
+    return Response(content=content, media_type=XLSX_MEDIA_TYPE, headers=headers)

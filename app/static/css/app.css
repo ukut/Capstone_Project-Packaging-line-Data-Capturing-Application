@@ -169,3 +169,7 @@ a { color: var(--color-accent); }
     border-radius: 4px;
     margin: 0.75rem 0;
 }
+
+/* --- legacy export (B-03) --- */
+a.btn-secondary { display: inline-block; text-decoration: none; }
+.export-link { margin-bottom: 0.75rem; }
