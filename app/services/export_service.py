@@ -13,9 +13,9 @@ derivations are the same ones unit-tested against the real April-2020 sheet
 (see tests/unit/test_derived_and_anomaly.py), so the numbers are guaranteed to
 match the legacy output without depending on Excel recalculation.
 
-NOTE: the column order/headers below mirror a standard downtime log; confirm
-them against the actual legacy workbook and reorder LEGACY_COLUMNS if needed —
-it's a one-line change per column and nothing else has to move.
+The column order and header text were verified against the real legacy
+workbook: S/N through Month - Year, with the h:mm duration headed simply
+"Duration" and the spaced "Week - Year" / "Month - Year" forms.
 """
 
 from collections.abc import Callable
@@ -33,29 +33,31 @@ from app.models.shift import Shift
 from app.repositories.loss_event_repo import LossEventRepository
 from app.services.derived import DerivedFields, derive_fields
 
-# A column is (header, extractor). The extractor receives the event, its derived
-# fields, and the parent shift, and returns the cell value.
-Extractor = Callable[[LossEvent, DerivedFields, Shift], Any]
+# A column is (header, extractor). The extractor receives the 1-based row
+# serial number, the event, its derived fields, and the parent shift, and
+# returns the cell value. Order and header text verified against the real
+# legacy workbook (July 2026).
+Extractor = Callable[[int, LossEvent, DerivedFields, Shift], Any]
 
 LEGACY_COLUMNS: list[tuple[str, Extractor]] = [
-    ("Date", lambda e, d, s: e.event_date),
-    ("Shift", lambda e, d, s: s.shift_name.value.upper()),
-    ("Machine", lambda e, d, s: e.machine.name),
-    ("SKU", lambda e, d, s: e.sku.code),
-    ("Start", lambda e, d, s: e.event_start.strftime("%H:%M")),
-    ("Stop", lambda e, d, s: e.event_stop.strftime("%H:%M")),
-    ("Duration (h:mm)", lambda e, d, s: d.duration_hhmm),
-    ("Duration (min)", lambda e, d, s: d.duration_minutes),
-    ("Duration (hr)", lambda e, d, s: d.duration_hours),
-    ("Type of Loss", lambda e, d, s: e.loss_type.code),
-    ("BCS", lambda e, d, s: e.bcs_category.code),
-    ("Functional Failure Description", lambda e, d, s: e.functional_failure_description or ""),
-    ("Failure Mode Description", lambda e, d, s: e.failure_mode_description or ""),
-    ("Month", lambda e, d, s: d.month),
-    ("Week", lambda e, d, s: d.week),
-    ("Year", lambda e, d, s: d.year),
-    ("Week-Year", lambda e, d, s: d.week_year),
-    ("Month-Year", lambda e, d, s: d.month_year),
+    ("S/N.", lambda n, e, d, s: n),
+    ("Date", lambda n, e, d, s: e.event_date),
+    ("Event Start", lambda n, e, d, s: e.event_start.strftime("%H:%M")),
+    ("Event Stop", lambda n, e, d, s: e.event_stop.strftime("%H:%M")),
+    ("SKU", lambda n, e, d, s: e.sku.code),
+    ("BCS Losses", lambda n, e, d, s: e.bcs_category.code),
+    ("Type of Loss", lambda n, e, d, s: e.loss_type.code),
+    ("Machine", lambda n, e, d, s: e.machine.name),
+    ("Functional Failure Description", lambda n, e, d, s: e.functional_failure_description or ""),
+    ("Failure Mode Description", lambda n, e, d, s: e.failure_mode_description or ""),
+    ("Duration", lambda n, e, d, s: d.duration_hhmm),
+    ("Duration (min)", lambda n, e, d, s: d.duration_minutes),
+    ("Duration (hr)", lambda n, e, d, s: d.duration_hours),
+    ("Month", lambda n, e, d, s: d.month),
+    ("Week", lambda n, e, d, s: d.week),
+    ("Year", lambda n, e, d, s: d.year),
+    ("Week - Year", lambda n, e, d, s: d.week_year),
+    ("Month - Year", lambda n, e, d, s: d.month_year),
 ]
 
 _HEADER_FILL = PatternFill("solid", start_color="1F3A5F")
@@ -85,9 +87,9 @@ class ExportService:
             cell.fill = _HEADER_FILL
             cell.alignment = Alignment(horizontal="center", vertical="center")
 
-        for event in self.events.list_for_shift(shift.id):
+        for n, event in enumerate(self.events.list_for_shift(shift.id), start=1):
             derived = derive_fields(event.event_date, event.event_start, event.event_stop)
-            row = [extract(event, derived, shift) for _, extract in LEGACY_COLUMNS]
+            row = [extract(n, event, derived, shift) for _, extract in LEGACY_COLUMNS]
             ws.append(row)
 
         self._style_body(ws, n_cols=len(headers))

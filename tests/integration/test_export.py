@@ -100,7 +100,8 @@ def test_exported_workbook_has_18_columns_and_event_row(setup_db):
     ws = wb.active
     headers = [cell.value for cell in ws[1]]
     assert len(headers) == 18
-    assert headers[0] == "Date"
+    assert headers[0] == "S/N."
+    assert headers[1] == "Date"
     assert ws.max_row == 2  # header + one event
     # spot-check the 45-minute duration landed
     row = {ws.cell(row=1, column=i).value: ws.cell(row=2, column=i).value for i in range(1, 19)}
