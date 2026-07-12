@@ -17,24 +17,24 @@ from app.models.shift import Role, Shift, ShiftName, ShiftStatus, User
 from app.services.export_service import LEGACY_COLUMNS, ExportService
 
 EXPECTED_HEADERS = [
+    "S/N.",
     "Date",
-    "Shift",
-    "Machine",
+    "Event Start",
+    "Event Stop",
     "SKU",
-    "Start",
-    "Stop",
-    "Duration (h:mm)",
-    "Duration (min)",
-    "Duration (hr)",
+    "BCS Losses",
     "Type of Loss",
-    "BCS",
+    "Machine",
     "Functional Failure Description",
     "Failure Mode Description",
+    "Duration",
+    "Duration (min)",
+    "Duration (hr)",
     "Month",
     "Week",
     "Year",
-    "Week-Year",
-    "Month-Year",
+    "Week - Year",
+    "Month - Year",
 ]
 
 
@@ -105,23 +105,23 @@ def test_event_row_values_match_legacy():
     ws = wb.active
     row = {ws.cell(row=1, column=i).value: ws.cell(row=2, column=i).value for i in range(1, 19)}
 
-    assert row["Shift"] == "A"
+    assert row["S/N."] == 1
     assert row["Machine"] == "FillerCrowner"
     assert row["SKU"] == "Brew Lager(33cl)"
-    assert row["Start"] == "07:00"
-    assert row["Stop"] == "08:00"
-    assert row["Duration (h:mm)"] == "1:00"
+    assert row["Event Start"] == "07:00"
+    assert row["Event Stop"] == "08:00"
+    assert row["Duration"] == "1:00"
     assert row["Duration (min)"] == 60
     assert row["Duration (hr)"] == 1.0
     assert row["Type of Loss"] == "Breakdown"
-    assert row["BCS"] == "Breakdown"
+    assert row["BCS Losses"] == "Breakdown"
     assert row["Functional Failure Description"] == "Lift cylinder dropped"
     # Derived calendar parts, verified against the legacy sheet.
     assert row["Month"] == 4
     assert row["Week"] == 14
     assert row["Year"] == 2020
-    assert row["Week-Year"] == "Wk14-2020"
-    assert row["Month-Year"] == "M4-2020"
+    assert row["Week - Year"] == "Wk14-2020"
+    assert row["Month - Year"] == "M4-2020"
     db.close()
 
 
