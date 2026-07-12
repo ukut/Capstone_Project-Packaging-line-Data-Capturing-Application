@@ -122,4 +122,4 @@ docs/
 
 ## License
 
-MIT — see `LICENSE`.
+Ini Ekpenyong Ukut.
