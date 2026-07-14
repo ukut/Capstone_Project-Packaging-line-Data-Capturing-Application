@@ -1,14 +1,6 @@
 # Product Backlog — User Stories
 
-Copy each story below into a Trello card. Suggested Trello columns:
 
-- **Backlog** — everything starts here
-- **Sprint 1** / **Sprint 2** / **Sprint 3** — move into the right sprint at planning
-- **In Progress**
-- **In Review** (self-review for solo project — write a brief commit comment summarizing what was checked)
-- **Done**
-
-Format used: `[Sprint] STORY-ID — As a <role>, I want <capability>, so that <benefit>.` Acceptance criteria listed underneath.
 
 ---
 
@@ -221,7 +213,7 @@ Format used: `[Sprint] STORY-ID — As a <role>, I want <capability>, so that <b
 - Recorded with Zoom (or similar)
 - Government-issued ID shown on camera
 - Walks through: operator login → enter shift → close → supervisor review → anomaly review → approve → Excel export → dashboard
-- Uploaded as unlisted YouTube video; link in README
+- Uploaded in Google drive; link in README
 
 ### F-05 — Final submission
 **As the student, I want all Capstone artifacts submitted, so that I receive credit.**
@@ -230,7 +222,7 @@ Format used: `[Sprint] STORY-ID — As a <role>, I want <capability>, so that <b
 
 ---
 
-## Stretch (only if ahead of schedule)
+## Stretch 
 
 - Playwright E2E tests on critical user flows
 - Power BI integration (link the SQLite/Postgres for BI consumption)
