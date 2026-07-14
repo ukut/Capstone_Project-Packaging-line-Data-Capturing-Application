@@ -118,7 +118,7 @@ docs/
 | Deployed version | https://bottling-line-demo.onrender.com |
 | Task board | (Trello link added) |
 | Design and testing doc | `docs/DESIGN.md` |
-| Demo recording | (link added after July 11) |
+| Demo recording | https://drive.google.com/file/d/1NBhxpWM6N4vSMfE_61w3V8bL4Wyo3xzp/view?usp=sharing
 
 ## License
 
