@@ -117,7 +117,7 @@ docs/
 | Code repository | This repo |
 | Deployed version | https://bottling-line-demo.onrender.com |
 | Task board | https://trello.com/invite/b/6a33d65ff1267c7a6aa8efbb/ATTI48a3fad6225e1b1e3b046a47ef355ddf71F50C8C/packaging-line-data-capture |
-| Design and testing doc | `docs/DESIGN.md` |
+| Design and testing doc | https://drive.google.com/file/d/16CxqY6aEy5GH8Nrp_qhrdYP2Sh6a7d3C/view?usp=sharing |
 | Demo recording | https://drive.google.com/file/d/1NBhxpWM6N4vSMfE_61w3V8bL4Wyo3xzp/view?usp=sharing
 
 ## License
